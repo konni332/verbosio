@@ -1,4 +1,3 @@
-
 /// Sets the global verbosity level.
 ///
 /// # Usage

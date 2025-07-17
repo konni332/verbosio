@@ -20,13 +20,13 @@
 //! verror!("Something went wrong"); // [ERROR] Something went wrong
 //! ```
 
-mod macros;
-pub(crate) mod util;
-
+pub mod macros;
+pub mod util;
 use once_cell::sync::Lazy;
-use std::sync::atomic::{AtomicU8, Ordering};
+use std::sync::atomic::{AtomicU8};
 
 pub static VERBOSE: Lazy<AtomicU8> = Lazy::new(|| AtomicU8::new(0));
 
 /// Re-exports all macros for easy access.
 pub use macros::*;
+pub use util::*;

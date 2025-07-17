@@ -5,6 +5,7 @@ edition = "2024"
 description = "Minimal macro based logging with verbosity levels and optional colors"
 readme = "README.md"
 repository = "https://github.com/konni332/verbosio"
+homepage = "https://github.com/konni332/verbosio"
 license = "MIT OR Apache-2.0"
 keywords = ["logging", "verbosity", "cli"]
 categories = ["command-line-utilities", "development-tools"]
@@ -16,3 +17,6 @@ color = ["dep:colored"]
 [dependencies]
 once_cell = "1.21.3"
 colored = {version = "3.0.0", optional = true}
+
+[dev-dependencies]
+clap = {version = "4.5.41", features = ["derive"]}
