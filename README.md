@@ -1,4 +1,4 @@
-# verbose-log
+# verbosio
 
 A minimal macro-based logging utility for CLI tools and developer scripts.  
 Supports verbosity levels, optional color output, and has **zero dependencies by default**.
