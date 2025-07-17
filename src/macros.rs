@@ -55,7 +55,7 @@ macro_rules! get_verbosity {
 macro_rules! verbose_env {
     () => {
         let val = std::env::var("VERBOSE").unwrap_or_default();
-        $crate::set_verbose(val.parse::<u8>().unwrap_or(0));
+        $crate::set_verbosity!(val.parse::<u8>().unwrap_or(0));
     };
 }
 
