@@ -43,5 +43,6 @@ use std::sync::atomic::{AtomicU8};
 pub static VERBOSE: Lazy<AtomicU8> = Lazy::new(|| AtomicU8::new(0));
 
 /// Re-exports all macros for easy access.
+#[allow(unused_imports)]
 pub use macros::*;
 pub use util::*;
