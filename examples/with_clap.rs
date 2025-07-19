@@ -16,9 +16,9 @@ fn main() {
 
 use std::process::Command;
 fn run_ls() {
-    verbose!(1, "Running directory listing command...");
+    verbose!(@lvl 1, "Running directory listing command...");
 
-    let mut cmd: std::process::Command;
+    let mut cmd: Command;
 
     #[cfg(target_family = "unix")]
     {
@@ -36,8 +36,8 @@ fn run_ls() {
     let output = cmd.output().expect("Failed to execute command");
 
     if output.status.success() {
-        verbose!(1, "Command output:\n{}", String::from_utf8_lossy(&output.stdout));
+        verbose!(@lvl 1, "Command output:\n{}", String::from_utf8_lossy(&output.stdout));
     } else {
-        verror!(1, "Command failed:\n{}", String::from_utf8_lossy(&output.stderr));
+        verror!(@lvl 1, "Command failed:\n{}", String::from_utf8_lossy(&output.stderr));
     }
 }

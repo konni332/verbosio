@@ -63,7 +63,7 @@ macro_rules! verbose_env {
 ///
 /// # Syntax
 ///
-/// - `verbose!(1, "Message: {}", value);` → prints if verbosity ≥ 1
+/// - `verbose!(@lvl 1, "Message: {}", value);` → prints if verbosity ≥ 1
 /// - `verbose!("Message");`               → prints if verbosity ≥ 1 (shorthand)
 ///
 /// # Example
@@ -71,19 +71,21 @@ macro_rules! verbose_env {
 /// use verbosio::{set_verbosity, verbose};
 ///
 /// set_verbosity!(2);
-/// verbose!(1, "This shows");    // printed
-/// verbose!(3, "This won't");    // not printed
+/// verbose!(@lvl 1, "This shows");    // printed
+/// verbose!(@lvl 2, "This will show {}", "too"); // printed
+/// verbose!("And so will {}", "this"); // printed
+/// verbose!(@lvl 3, "This won't");    // not printed
 /// ```
 #[macro_export]
 macro_rules! verbose {
-    ($lvl:expr, $($arg:tt)*) => {
+    (@lvl $lvl:expr, $($arg:tt)+) => {
         if $crate::VERBOSE.load(std::sync::atomic::Ordering::Relaxed) >= $lvl {
-            println!($($arg)*);
+            println!($($arg)+);
         }
     };
-    ($( $arg:tt )*) => {
-        if $crate::VERBOSE.load(std::sync::atomic::Ordering::Relaxed) {
-            println!($($arg)*);
+    ($( $arg:tt )+) => {
+        if $crate::VERBOSE.load(std::sync::atomic::Ordering::Relaxed) >= 1 {
+            println!($($arg)+);
         }
     };
 }
@@ -92,7 +94,7 @@ macro_rules! verbose {
 ///
 /// # Syntax
 ///
-/// - `vinfo!(2, "Loaded {} items", count);` → prints if verbosity ≥ 2
+/// - `vinfo!(@lvl 2, "Loaded {} items", count);` → prints if verbosity ≥ 2
 /// - `vinfo!("Starting...");`               → prints if verbosity ≥ 1 (default)
 ///
 /// # Example
@@ -101,7 +103,7 @@ macro_rules! verbose {
 ///
 /// set_verbosity!(2);
 /// vinfo!("App started");       // printed
-/// vinfo!(3, "Details...");     // not printed
+/// vinfo!(@lvl 3, "Details...");     // not printed
 /// ```
 ///
 /// # Output Format
@@ -111,14 +113,14 @@ macro_rules! verbose {
 /// If the `"colors"` feature is enabled, the `[INFO]` tag may appear colored.
 #[macro_export]
 macro_rules! vinfo {
-    ($lvl:expr, $($arg:tt)*) => {
+    (@lvl $lvl:expr, $($arg:tt)+) => {
         if $crate::VERBOSE.load(std::sync::atomic::Ordering::Relaxed) >= $lvl {
-            println!("{} {}", $crate::format_level("INFO"), format!($($arg)*));
+            println!("{} {}", $crate::format_level("INFO"), format!($($arg)+));
         }
     };
-    ($( $arg:tt )*) => {
+    ($( $arg:tt )+) => {
         if $crate::VERBOSE.load(std::sync::atomic::Ordering::Relaxed) >= 1 {
-            println!("{} {}", $crate::format_level("INFO"), format!($($arg)*));
+            println!("{} {}", $crate::format_level("INFO"), format!($($arg)+));
         }
     };
 }
@@ -127,7 +129,7 @@ macro_rules! vinfo {
 ///
 /// # Syntax
 ///
-/// - `vwarn!(2, "Low memory");`      → prints if verbosity ≥ 2
+/// - `vwarn!(@lvl 2, "Low memory");`      → prints if verbosity ≥ 2
 /// - `vwarn!("Disk almost full");`   → prints if verbosity ≥ 1
 ///
 /// # Output Format
@@ -145,14 +147,14 @@ macro_rules! vinfo {
 /// With `"colors"` feature enabled, the `[WARN]` tag may be yellow.
 #[macro_export]
 macro_rules! vwarn {
-    ($lvl:expr, $($arg:tt)*) => {
+    (@lvl $lvl:expr, $($arg:tt)+) => {
         if $crate::VERBOSE.load(std::sync::atomic::Ordering::Relaxed) >= $lvl {
-            println!("{} {}", $crate::format_level("WARN"), format!($($arg)*));
+            println!("{} {}", $crate::format_level("WARN"), format!($($arg)+));
         }
     };
-    ($( $arg:tt )*) => {
+    ($( $arg:tt )+) => {
         if $crate::VERBOSE.load(std::sync::atomic::Ordering::Relaxed) >= 1 {
-            println!("{} {}", $crate::format_level("WARN"), format!($($arg)*));
+            println!("{} {}", $crate::format_level("WARN"), format!($($arg)+));
         }
     };
 }
@@ -161,7 +163,7 @@ macro_rules! vwarn {
 ///
 /// # Syntax
 ///
-/// - `verror!(3, "Critical: {}", reason);` → prints if verbosity ≥ 3
+/// - `verror!(@lvl 3, "Critical: {}", reason);` → prints if verbosity ≥ 3
 /// - `verror!("Oops");`                    → prints if verbosity ≥ 1
 ///
 /// # Output Format
@@ -173,21 +175,21 @@ macro_rules! vwarn {
 ///
 /// set_verbosity!(2);
 /// verror!("An error occurred"); // printed
-/// verror!(3, "Only for debug"); // not printed
+/// verror!(@lvl 3, "Only for debug"); // not printed
 /// ```
 ///
 /// # Features
 /// If the `"colors"` feature is enabled, the `[ERROR]` tag may be red.
 #[macro_export]
 macro_rules! verror {
-    ($lvl:expr, $($arg:tt)*) => {
+    (@lvl $lvl:expr, $($arg:tt)+) => {
         if $crate::VERBOSE.load(std::sync::atomic::Ordering::Relaxed) >= $lvl {
-            eprintln!("{} {}", $crate::format_level("ERROR"), format!($($arg)*));
+            eprintln!("{} {}", $crate::format_level("ERROR"), format!($($arg)+));
         }
     };
-    ($( $arg:tt )*) => {
+    ($( $arg:tt )+) => {
         if $crate::VERBOSE.load(std::sync::atomic::Ordering::Relaxed) >= 1 {
-            eprintln!("{} {}", $crate::format_level("ERROR"), format!($($arg)*));
+            eprintln!("{} {}", $crate::format_level("ERROR"), format!($($arg)+));
         }
     };
 }

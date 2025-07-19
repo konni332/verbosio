@@ -19,9 +19,9 @@
 //!
 //! set_verbosity!(2);
 //!
-//! verbose!(1, "Hello World!");         // printed
+//! verbose!(@lvl 1, "Hello World!");         // printed
 //! vinfo!("App started.");              // [INFO] App started.
-//! vwarn!(3, "This won't show.");       // not printed
+//! vwarn!(@lvl 3, "This won't show.");       // not printed
 //! verror!("Something went wrong");     // [ERROR] Something went wrong
 //! ```
 //!

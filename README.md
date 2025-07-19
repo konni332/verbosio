@@ -17,12 +17,12 @@ Add to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-verbosio = "0.1"
+verbosio = "0.2"
 ```
 
 Optional: enable colored output
 ```toml
-verbosio = { version = "0.1", features = ["color"] }
+verbosio = { version = "0.2", features = ["color"] }
 ```
 
 ---
@@ -36,7 +36,7 @@ fn main() {
     set_verbosity!(2);
 
     vinfo!("App started");
-    vwarn!(3, "This will only show if verbosity >= 3");
+    vwarn!(@lvl 3, "This will only show if verbosity >= 3");
     verror!("Something went wrong");
 }
 ````
@@ -57,6 +57,7 @@ fn main() {
 
 *All ``lvl?`` are optional. If no level is given, it will be treated like a boolean value!*  
 *This means, ``verbose!("foo")`` will print if the verbosity is >= 1*
+*All lvl have to be explicit using `@lvl`: `verbose!(@lvl 2, "foo")`*
 
 ---
 
