@@ -80,12 +80,14 @@ macro_rules! verbose_env {
 macro_rules! verbose {
     (@lvl $lvl:expr, $($arg:tt)+) => {
         if $crate::VERBOSE.load(std::sync::atomic::Ordering::Relaxed) >= $lvl {
-            println!($($arg)+);
+            let msg = format!("{}{}", $crate::format_time(), format!($($arg)+));
+            println!("{}", msg);
         }
     };
     ($( $arg:tt )+) => {
         if $crate::VERBOSE.load(std::sync::atomic::Ordering::Relaxed) >= 1 {
-            println!($($arg)+);
+            let msg = format!("{}{}", $crate::format_time(), format!($($arg)+));
+            println!("{}", msg);
         }
     };
 }
@@ -115,12 +117,12 @@ macro_rules! verbose {
 macro_rules! vinfo {
     (@lvl $lvl:expr, $($arg:tt)+) => {
         if $crate::VERBOSE.load(std::sync::atomic::Ordering::Relaxed) >= $lvl {
-            println!("{} {}", $crate::format_level("INFO"), format!($($arg)+));
+            println!("{}{}{}", $crate::format_level("INFO"), $crate::format_time(), format!($($arg)+));
         }
     };
     ($( $arg:tt )+) => {
         if $crate::VERBOSE.load(std::sync::atomic::Ordering::Relaxed) >= 1 {
-            println!("{} {}", $crate::format_level("INFO"), format!($($arg)+));
+            println!("{}{}{}", $crate::format_level("INFO"), $crate::format_time(), format!($($arg)+));
         }
     };
 }
@@ -149,12 +151,12 @@ macro_rules! vinfo {
 macro_rules! vwarn {
     (@lvl $lvl:expr, $($arg:tt)+) => {
         if $crate::VERBOSE.load(std::sync::atomic::Ordering::Relaxed) >= $lvl {
-            println!("{} {}", $crate::format_level("WARN"), format!($($arg)+));
+            println!("{}{}{}", $crate::format_level("WARN"), $crate::format_time(), format!($($arg)+));
         }
     };
     ($( $arg:tt )+) => {
         if $crate::VERBOSE.load(std::sync::atomic::Ordering::Relaxed) >= 1 {
-            println!("{} {}", $crate::format_level("WARN"), format!($($arg)+));
+            println!("{}{}{}", $crate::format_level("WARN"), $crate::format_time(), format!($($arg)+));
         }
     };
 }
@@ -184,12 +186,51 @@ macro_rules! vwarn {
 macro_rules! verror {
     (@lvl $lvl:expr, $($arg:tt)+) => {
         if $crate::VERBOSE.load(std::sync::atomic::Ordering::Relaxed) >= $lvl {
-            eprintln!("{} {}", $crate::format_level("ERROR"), format!($($arg)+));
+            eprintln!("{}{}{}", $crate::format_level("ERROR"), $crate::format_time(), format!($($arg)+));
         }
     };
     ($( $arg:tt )+) => {
         if $crate::VERBOSE.load(std::sync::atomic::Ordering::Relaxed) >= 1 {
-            eprintln!("{} {}", $crate::format_level("ERROR"), format!($($arg)+));
+            eprintln!("{}{}{}", $crate::format_level("ERROR"), $crate::format_time(), format!($($arg)+));
+        }
+    };
+}
+
+
+/// Prints a `[DEBUG]` message to stdout if in debug mode.
+///
+/// # Syntax
+///
+/// - `vebug!(@lvl 3, "Critical: {}", reason);` → prints if verbosity ≥ 3 and in debug mode
+/// - `vebug!("Oops");`                    → prints if in debug mode
+///
+/// # Output Format
+/// Messages appear as `[DEBUG] ...` and are printed to `stdout`.
+///
+/// # Example
+/// ```rust
+/// use verbosio::{set_verbosity, vebug};
+///
+/// vebug!("Always in debug mode!"); // printed
+/// vebug!(@lvl 3, "Only for debug when level is high enough"); // not printed
+/// ```
+///
+/// # Features
+/// If the `"colors"` feature is enabled, the `[DEBUG]` tag may be yellow.
+#[macro_export]
+macro_rules! vebug {
+    (@lvl $lvl:expr, $($arg:tt)+) => {
+        #[cfg(debug_assertions)]
+        {
+            if $crate::VERBOSE.load(std::sync::atomic::Ordering::Relaxed) >= $lvl {
+                println!("{}{}{}", $crate::format_level("DEBUG"), $crate::format_time(), format!($($arg)+));
+            }
+        }
+    };
+    ($($arg:tt)+) => {
+        #[cfg(debug_assertions)]
+        {
+            println!("{}{}{}", $crate::format_level("DEBUG"), $crate::format_time(), format!($($arg)+));
         }
     };
 }
